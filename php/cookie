@@ -1,0 +1,75 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Set cookies for 1 hour
+    setcookie("username", $username, time() + 3600, "/");
+    setcookie("password", $password, time() + 3600, "/");
+
+    // Redirect to dashboard
+    header("Location: dashboard.php");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Form with Cookies</title>
+</head>
+<body>
+    <h2>Login</h2>
+
+    <form method="POST" action="login.php">
+        <label>Username:</label><br>
+        <input type="text" name="username" required><br><br>
+
+        <label>Password:</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
+
+
+
+
+//// dashboard.php
+
+<?php
+// Check if cookies exist
+if (!isset($_COOKIE['username']) || !isset($_COOKIE['password'])) {
+    echo "No cookies found. Please <a href='login.php'>login again</a>.";
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard with Cookies</title>
+</head>
+<body>
+    <h2>Welcome to Dashboard</h2>
+    <p><strong>Username:</strong> <?php echo htmlspecialchars($_COOKIE['username']); ?></p>
+    <p><strong>Password:</strong> <?php echo htmlspecialchars($_COOKIE['password']); ?></p>
+
+    <form method="post" action="logout.php">
+        <button type="submit">Logout</button>
+    </form>
+</body>
+</html>
+
+
+<?php
+// Delete cookies by setting expiration time in the past
+setcookie("username", "", time() - 3600, "/");
+setcookie("password", "", time() - 3600, "/");
+
+// Redirect to login
+header("Location: login.php");
+exit();
+
+
